@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Board } from './components/Board';
 import { OrderIntakeForm } from './components/OrderIntakeForm';
 import { Activity, Plus } from 'lucide-react';

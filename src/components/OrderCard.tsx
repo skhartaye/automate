@@ -63,7 +63,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     if (config.nextStage) {
       updateOrderStage(order.id, config.nextStage);
       toast.success(`Moved to ${STAGE_CONFIG[config.nextStage].label}`, {
-        icon: STAGE_CONFIG[config.nextStage].icon
+        icon: <span>{STAGE_CONFIG[config.nextStage].icon}</span>
       });
     }
   };
