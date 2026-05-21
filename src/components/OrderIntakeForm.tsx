@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { useOrderStore } from '../store/orderStore';
 import type { CatalogItem } from '../store/orderStore';
 import { X, ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import './OrderIntakeForm.css';
 
 interface OrderIntakeFormProps {
@@ -65,6 +67,7 @@ export const OrderIntakeForm: React.FC<OrderIntakeFormProps> = ({ onClose }) => 
       totalAmount
     });
 
+    toast.success('Order placed successfully!', { icon: '☕' });
     onClose();
   };
 
@@ -84,7 +87,8 @@ export const OrderIntakeForm: React.FC<OrderIntakeFormProps> = ({ onClose }) => 
               const isOutOfStock = remainingStock <= 0;
 
               return (
-                <button
+                <motion.button
+                  whileTap={{ scale: isOutOfStock ? 1 : 0.95 }}
                   key={item.id}
                   className={`catalog-item-btn ${isOutOfStock ? 'out-of-stock' : ''}`}
                   onClick={() => addToCart(item)}
@@ -94,7 +98,7 @@ export const OrderIntakeForm: React.FC<OrderIntakeFormProps> = ({ onClose }) => 
                   <div className="item-name">{item.name}</div>
                   <div className="item-price">${item.price.toFixed(2)}</div>
                   <div className="item-stock">{remainingStock} left</div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -123,30 +127,46 @@ export const OrderIntakeForm: React.FC<OrderIntakeFormProps> = ({ onClose }) => 
           </div>
 
           <div className="ticket-items">
-            {cart.length === 0 ? (
-              <div className="empty-cart">Cart is empty</div>
-            ) : (
-              cart.map(item => (
-                <div key={item.id} className="ticket-item">
-                  <div className="ticket-item-info">
-                    <span className="ticket-item-name">{item.name}</span>
-                    <span className="ticket-item-price">${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                  <div className="ticket-item-controls">
-                    <button className="qty-btn" onClick={() => updateQuantity(item.id, -1)} disabled={item.quantity <= 1}>
-                      <Minus size={14} />
-                    </button>
-                    <span className="qty-value">{item.quantity}</span>
-                    <button className="qty-btn" onClick={() => updateQuantity(item.id, 1)} disabled={item.quantity >= item.currentStock}>
-                      <Plus size={14} />
-                    </button>
-                    <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+            <AnimatePresence mode="popLayout">
+              {cart.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  exit={{ opacity: 0 }}
+                  className="empty-cart"
+                >
+                  Cart is empty
+                </motion.div>
+              ) : (
+                cart.map(item => (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, x: -20 }}
+                    key={item.id} 
+                    className="ticket-item"
+                  >
+                    <div className="ticket-item-info">
+                      <span className="ticket-item-name">{item.name}</span>
+                      <span className="ticket-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                    <div className="ticket-item-controls">
+                      <button className="qty-btn" onClick={() => updateQuantity(item.id, -1)} disabled={item.quantity <= 1}>
+                        <Minus size={14} />
+                      </button>
+                      <span className="qty-value">{item.quantity}</span>
+                      <button className="qty-btn" onClick={() => updateQuantity(item.id, 1)} disabled={item.quantity >= item.currentStock}>
+                        <Plus size={14} />
+                      </button>
+                      <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="ticket-footer">

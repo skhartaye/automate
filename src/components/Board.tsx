@@ -2,6 +2,7 @@ import React from 'react';
 import { useOrderStore } from '../store/orderStore';
 import type { OrderStage } from '../store/orderStore';
 import { OrderCard } from './OrderCard';
+import { AnimatePresence } from 'framer-motion';
 import './Board.css';
 
 const STAGES: { id: OrderStage; title: string }[] = [
@@ -30,13 +31,15 @@ export const Board: React.FC = () => {
               </div>
               
               <div className="board-column-content">
-                {stageOrders.length === 0 ? (
-                  <div className="empty-state">No orders</div>
-                ) : (
-                  stageOrders.map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                  ))
-                )}
+                <AnimatePresence mode="popLayout">
+                  {stageOrders.length === 0 ? (
+                    <div className="empty-state">Ready for orders</div>
+                  ) : (
+                    stageOrders.map((order) => (
+                      <OrderCard key={order.id} order={order} />
+                    ))
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           );

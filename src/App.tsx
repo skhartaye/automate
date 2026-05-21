@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Board } from './components/Board';
 import { OrderIntakeForm } from './components/OrderIntakeForm';
 import { Activity, Plus } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
 import './App.css';
 
 function App() {
@@ -35,6 +36,19 @@ function App() {
       {isIntakeOpen && (
         <OrderIntakeForm onClose={() => setIsIntakeOpen(false)} />
       )}
+      
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'var(--surface)',
+            color: 'var(--text-main)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: 'var(--shadow-lg)'
+          },
+        }}
+      />
     </div>
   );
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import { useOrderStore } from '../store/orderStore';
 import type { Order, OrderStage } from '../store/orderStore';
 import { Clock, Package, CreditCard, Box, Truck, CheckCircle, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import './OrderCard.css';
 
 interface OrderCardProps {
@@ -60,6 +62,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const handleNextAction = () => {
     if (config.nextStage) {
       updateOrderStage(order.id, config.nextStage);
+      toast.success(`Moved to ${STAGE_CONFIG[config.nextStage].label}`, {
+        icon: STAGE_CONFIG[config.nextStage].icon
+      });
     }
   };
 
@@ -68,7 +73,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   }).format(new Date(order.createdAt));
 
   return (
-    <div className="order-card animate-fade-in">
+    <motion.div 
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      className="order-card"
+    >
       <div className="order-card-header">
         <span className="order-id">{order.id}</span>
         <span className="order-date">{formattedDate}</span>
@@ -101,12 +113,17 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </div>
         
         {config.nextStage && (
-          <button className="btn btn-primary btn-sm next-action-btn" onClick={handleNextAction}>
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn btn-primary btn-sm next-action-btn" 
+            onClick={handleNextAction}
+          >
             {config.nextAction}
             <ArrowRight size={14} />
-          </button>
+          </motion.button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
